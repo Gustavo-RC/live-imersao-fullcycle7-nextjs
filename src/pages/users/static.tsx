@@ -1,5 +1,5 @@
 import axios from "axios";
-import { GetServerSideProps, NextPage } from "next";
+import { GetStaticProps, NextPage } from "next";
 
 type User = {
     name: string;
@@ -7,16 +7,17 @@ type User = {
 
 type UserPageProps = {
     users: User[];
+    date: string;
 }
 
 const url = "https://jsonplaceholder.typicode.com/users";
 
-const Index: NextPage<UserPageProps> = (props) => {
-const { users } = props;
+const Static: NextPage<UserPageProps> = (props) => {
+const { users, date } = props;
 
   return (
       <div>
-      <h1>Index </h1>
+      <h1>Static - {date}</h1>
       <div>
         <ul>
             {users.map((user: any, key) => (
@@ -29,9 +30,9 @@ const { users } = props;
   );
   };
 
-  export default Index;
+  export default Static;
 
-  export const getServerSideProps: GetServerSideProps = async () => {
+  export const getStaticProps: GetStaticProps = async () => {
     
     const {data} = await axios.get(url);
     const users = data;
@@ -39,7 +40,9 @@ const { users } = props;
     return{
         props: {
             users: data,
+            date: new Date().getTime(),
     },
+    revalidate: 10
 };
 
 };
